@@ -1,9 +1,12 @@
 const { Client } = require('@elastic/elasticsearch');
-const host = process.env['ELASTICSEARCH_URL'] || 'http://localhost:9201';
-var indexName = process.env['defaultIndex'] || "restaurants2";
-
-var client = new Client({ node: host });
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:client');
+
+const { ELASTICSEARCH_URL = 'http://localhost:9200' } = process.env;
+
+const client = new Client({
+  node: ELASTICSEARCH_URL,
+  healthcheck: false
+});
 
 client.on('request', (err, result) => {
   if (err)
@@ -13,12 +16,7 @@ client.on('request', (err, result) => {
     debug('[request]', body, meta, headers);
   }
 });
-/*
-client.on('deserialization', (err, result) => {
-  // console.log(err, result);
-  debug('[deserialization]', result);
-});
-*/
+
 client.on('response', (err, result) => {
   if (err)
     debug('[Error response]', err);
@@ -28,4 +26,4 @@ client.on('response', (err, result) => {
   }
 });
 
-module.exports = { indexName, client };
+module.exports = client;

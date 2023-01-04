@@ -1,6 +1,6 @@
 const { Client } = require('@elastic/elasticsearch');
-var client = new Client({ node: 'http://localhost:9200' });
-var debug = require('debug')('es-log');
+const client = new Client({ node: 'http://localhost:9200' });
+const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->geo_search');
 
 (async () => {
   client.on('request', (err, result) => {
@@ -8,15 +8,13 @@ var debug = require('debug')('es-log');
     debug('request', err, request, connection);
   });
   client.on('deserialization', (err, result) => {
-    // console.log(err, result);
     debug('deserialization', err, result);
   });
   client.on('response', (err, result) => {
-    // console.log(err, result);
     debug('response', err, result);
   });
 
-  var index = 'restaurants2';
+  var index = 'restaurants';
   try {
     var query = param_by_circle("200m", { "lat": -37.852, "lon": 144.993165 });
     // var query = param_by_rectange({ "lat": -37.80, "lon": 144.90 }, { "lat": -38, "lon": 145 });
@@ -24,9 +22,9 @@ var debug = require('debug')('es-log');
       index,
       body: { query }
     });
-    console.log(body);
+    debug(body);
   } catch (ex) {
-    console.log(ex);
+    debug(ex);
   }
 })();
 

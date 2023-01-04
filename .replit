@@ -1,2 +1,2 @@
 language = "nodejs"
-run = "DEBUG=elasticsearch-restaurants-api-nodejs* npx nodemon index.js"
+run = "npm run start"

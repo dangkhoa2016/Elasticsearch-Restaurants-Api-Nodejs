@@ -1,6 +1,6 @@
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:index');
 const qs = require('qs');
-const client = require('./elasticsearch_client');
+const client = require('./services/elasticsearch_client');
 
 // CommonJs
 const server = require('fastify')({
@@ -27,26 +27,20 @@ server.register(require('fastify-cors'), {
   }
 });
 
-const { PORT = 3000, HOST = '0.0.0.0' } = process.env;
-
-server.register(require('fastify-elasticsearch'), {
-  client
-});
+server.register(require('fastify-elasticsearch'), { client });
 
 server.register(require('./routes/home'));
 server.register(require('./routes/elasticsearch'));
 server.register(require('./routes/errors'));
-server.register(require('./logger'));
+server.register(require('./services/logger'));
 
-(async () => {
-  try {
-    await server.listen(PORT, HOST);
+server.decorate('exception', (request, reply) => {
+  reply.code(500).send({ 'error': '500 Internal Server Error.', msg: 'Please go home' });
+});
 
-    process.on('SIGINT', () => server.close());
-    process.on('SIGTERM', () => server.close());
-  } catch (err) {
-    // console.log('err', err);
-    server.log.error(err);
-    process.exit(1);
-  }
-})();
+server.setErrorHandler(async (error, request, reply) => {
+  debug('Server Error', error);
+  return server.exception(request, reply);
+});
+
+module.exports = server;

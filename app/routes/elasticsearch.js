@@ -2,7 +2,7 @@ const debug = require('debug')('elasticsearch-restaurants-api-nodejs:routes->ela
 
 const {
   is_location_empty, default_index, get_geo_search_params
-} = require('../helper');
+} = require('../services/helper');
 
 const searchSchema = {
   type: 'object',
@@ -23,7 +23,7 @@ function timeout(ms) {
 
 async function routes(fastify, options) {
   const elastic = fastify.elastic;
-  // console.log('elastic', elastic, fastify, options);
+  // debug('elastic', elastic, fastify, options);
 
   const schema = {
     body: searchSchema,
@@ -31,7 +31,7 @@ async function routes(fastify, options) {
 
   fastify.post('/search', { schema }, async (request, reply) => {
     var { index, query, sleep } = get_geo_search_params(request.body);
-    debug(JSON.stringify(query));
+    debug('/search query', JSON.stringify(query));
 
     if (query.error)
       return query.error;
@@ -50,7 +50,7 @@ async function routes(fastify, options) {
   });
 
   fastify.get('/doc/:id', async function(request, reply) {
-    var { index = default_index, q, _source = true } = request.query;
+    var { index = default_index, _source = true } = request.query;
 
     var { id } = request.params;
     const { body } = await elastic.get({

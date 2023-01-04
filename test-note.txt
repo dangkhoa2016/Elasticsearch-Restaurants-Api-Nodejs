@@ -87,3 +87,21 @@ fetch('/search', { method:'post', body: JSON.stringify({
         "lon": 145
     }
 }), headers: { 'content-type':'application/json' } })
+
+
+curl -X POST 'http://localhost:8080/search' \
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+  --data-raw 'type=circle&distance=200m&location%5Blat%5D=-37.852&location%5Blon%5D=144.993165'
+
+curl -X POST 'http://localhost:8080/search' \
+  -H 'content-type: application/json' \
+  --data-raw '{"type":"rectangle","top_left":{"lat":-37.8,"lon":144.9},"bottom_right":{"lat":-38,"lon":145}}'
+
+
+curl -X GET 'localhost:8080/?test=home'
+
+curl -X GET 'localhost:8080/doc/53516'
+
+curl -X GET 'localhost:8080/not-found'
+
+curl -X GET 'localhost:8080/search'

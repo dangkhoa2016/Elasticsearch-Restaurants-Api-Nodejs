@@ -1,25 +1,28 @@
 {
-  "name": "elasticsearch-restaurants-api",
+  "name": "elasticsearch-restaurants-api-nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "nodemon index.js",
+  "main": "bin/www",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "DEBUG=elasticsearch-restaurants-api-nodejs* nodemon index.js"
+    "start": "DEBUG=elasticsearch-restaurants-api-nodejs* nodemon bin/www"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^7.13.0",
+    "@elastic/elasticsearch": "7.13",
     "array.prototype.flatmap": "^1.2.5",
     "debug": "^4.3.3",
+    "dotenv": "^16.0.3",
     "fastify": "^3.24.1",
     "fastify-cors": "^6.0.2",
     "fastify-elasticsearch": "^2.0.0",
     "fastify-formbody": "^5.2.0",
-    "nodemon": "^2.0.15",
     "qs": "^6.10.1",
     "stream-json": "^1.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }

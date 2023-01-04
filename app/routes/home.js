@@ -4,17 +4,18 @@ const fs = require('fs');
 async function routes(fastify, options) {
 
   fastify.get('/', async (request, reply) => {
-    return { hello: 'world' }
+    debug(`Get home at [${new Date()}]`);
+    return { message: 'Welcome to Elasticsearch Restaurants Api Nodejs.' };
   });
 
   fastify.get('/favicon.ico', async (request, reply) => {
-    const buffer = fs.readFileSync('./imgs/klc_favicon.ico');
+    const buffer = fs.readFileSync('./app/imgs/favicon.ico');
     reply.type('image/x-icon');
     reply.send(buffer);
   });
 
   fastify.get('/favicon.png', async (request, reply) => {
-    const buffer = fs.readFileSync('./imgs/klc_favicon.png');
+    const buffer = fs.readFileSync('./app/imgs/favicon.png');
     reply.type('image/png');
     reply.send(buffer);
   });
