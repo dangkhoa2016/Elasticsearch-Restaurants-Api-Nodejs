@@ -1,17 +1,20 @@
-'use strict'
+// to run this file, execute: DEBUG=elasticsearch-restaurants-api-nodejs:* node app/manual/import.js
 
+'use strict'
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
+}
 require('array.prototype.flatmap').shim();
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->import');
 
 const ElasticsearchService = require('./elasticsearch');
 const { client, index_name } = require('./client');
-// const index_name = 'restaurants';
-const StreamArray = require('stream-json/streamers/StreamArray');
+const StreamArray = require('stream-json/streamers/stream-array.js');
 const { Writable } = require('stream');
 const fs = require('fs'), path = require('path');
 const filePath = path.join(__dirname, './au-final.json');
 const fileStream = fs.createReadStream(filePath);
-const jsonStream = StreamArray.withParser();
+const jsonStream = StreamArray.withParserAsStream();
 var arr = [];
 var doneTotal = 0;
 
@@ -87,10 +90,16 @@ async function run(dataset) {
 
 (async () => {
 
+  const connected = await ElasticsearchService.verifyConnection();
+  if (!connected) {
+    debug('Elasticsearch cluster is down!');
+    return;
+  }
+
   await ElasticsearchService.initIndex(index_name);
 
   //Pipe the streams as follows
-  fileStream.pipe(jsonStream.input);
+  fileStream.pipe(jsonStream);
   jsonStream.pipe(processingStream);
   //So we're waiting for the 'finish' event when everything is done.
   processingStream.on('finish', async () => {

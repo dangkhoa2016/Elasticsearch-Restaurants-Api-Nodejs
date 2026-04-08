@@ -1,5 +1,9 @@
-const { Client } = require('@elastic/elasticsearch');
-const client = new Client({ node: 'http://localhost:9200' });
+const path = require('path');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
+}
+const { client } = require('./client');
+
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->geo_search');
 
 (async () => {

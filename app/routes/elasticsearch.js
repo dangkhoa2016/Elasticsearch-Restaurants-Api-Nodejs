@@ -1,7 +1,7 @@
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:routes->elasticsearch');
 
 const {
-  is_location_empty, default_index, get_geo_search_params
+  default_index, get_geo_search_params
 } = require('../services/helper');
 
 const searchSchema = {
@@ -10,10 +10,10 @@ const searchSchema = {
   properties: {
     index: { type: 'string' },
     type: { type: 'string' },
-    location: { type: ['string', 'object'] },
-    radius: { type: ['string', 'number'] },
-    top_left: { type: ['string', 'object'] },
-    bottom_right: { type: ['string', 'object'] },
+    location: { anyOf: [{ type: 'string' }, { type: 'object' }] },
+    radius: { anyOf: [{ type: 'string' }, { type: 'number' }] },
+    top_left: { anyOf: [{ type: 'string' }, { type: 'object' }] },
+    bottom_right: { anyOf: [{ type: 'string' }, { type: 'object' }] },
   },
 }
 
@@ -22,7 +22,7 @@ function timeout(ms) {
 }
 
 async function routes(fastify, options) {
-  const elastic = fastify.elastic;
+  const elastic = fastify.opensearch;
   // debug('elastic', elastic, fastify, options);
 
   const schema = {

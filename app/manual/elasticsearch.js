@@ -102,6 +102,16 @@ class ElasticsearchService {
       debug('Error remove document', ex);
     });
   }
+
+  verifyConnection() {
+    return this.client.ping().then(() => {
+      debug('Elasticsearch cluster is up!');
+      return true;
+    }).catch((error) => {
+      debug('Elasticsearch cluster is down!', error);
+      return false;
+    });
+  }
 };
 
 module.exports = new ElasticsearchService();
