@@ -1,9 +1,7 @@
 // to run this file, execute: DEBUG=elasticsearch-restaurants-api-nodejs:* node app/manual/import.js
 
 'use strict'
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
-}
+require('./bootstrap');
 require('array.prototype.flatmap').shim();
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->import');
 
@@ -11,7 +9,8 @@ const ElasticsearchService = require('./elasticsearch');
 const { client, index_name } = require('./client');
 const StreamArray = require('stream-json/streamers/stream-array.js');
 const { Writable } = require('stream');
-const fs = require('fs'), path = require('path');
+const fs = require('fs');
+const path = require('path');
 const filePath = path.join(__dirname, './au-final.json');
 const fileStream = fs.createReadStream(filePath);
 const jsonStream = StreamArray.withParserAsStream();

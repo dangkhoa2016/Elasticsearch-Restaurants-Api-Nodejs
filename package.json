@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "DEBUG=elasticsearch-restaurants-api-nodejs* nodemon bin/www",
     "start": "node bin/www",
-    "test": "ENABLE_STRUCTURED_LOGGING=false node --test test/*.test.js"
+    "lint": "eslint .",
+    "test": "ENABLE_STRUCTURED_LOGGING=false node --test test/*.test.js",
+    "check": "yarn lint && yarn test"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +32,9 @@
     "stream-json": "^2.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
     "nodemon": "^3.1.14"
   }
 }

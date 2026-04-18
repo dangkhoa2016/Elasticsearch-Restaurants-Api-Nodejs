@@ -1,14 +1,18 @@
 // const { Client } = require('@elastic/elasticsearch');
 const { Client } = require('@opensearch-project/opensearch');
 
-// const host = process.env['ELASTICSEARCH_URL'] || 'http://localhost:9200';
-// const index_name = process.env['DEFAULT_INDEX'] || 'restaurants';
-const {
-  ELASTICSEARCH_URL: host = 'http://localhost:9200',
-  DEFAULT_INDEX: index_name = 'restaurants'
-} = process.env;
-console.log('Elasticsearch Client Config', { host, index_name });
-const client = new Client({ node: host, healthcheck: false });
+const { config, mask_url_credentials } = require('./bootstrap');
+
+const host = config.elasticsearch_url;
+const index_name = config.default_index;
+
+console.log('Elasticsearch Client Config', { host: mask_url_credentials(host), index_name });
+
+const client = new Client({
+  node: host,
+  healthcheck: false,
+  requestTimeout: config.opensearch_request_timeout
+});
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->client');
 
 client.on('request', (err, result) => {

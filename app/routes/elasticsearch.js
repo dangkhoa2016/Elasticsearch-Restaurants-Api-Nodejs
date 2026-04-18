@@ -1,10 +1,17 @@
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:routes->elasticsearch');
 
 const config = require('../config/runtime');
+const {
+  format_search_response,
+  format_document_response
+} = require('../services/response_formatter');
 
 const {
   default_index, get_geo_search_params
 } = require('../services/helper');
+
+const DEFAULT_SEARCH_LIMIT = 80;
+const DEFAULT_SEARCH_OFFSET = 0;
 
 const pointSchema = {
   anyOf: [
@@ -176,10 +183,14 @@ async function routes(fastify, options) {
     // demo only 80 results
     var { body } = await elastic.search({
       index,
-      body: { query, size: 80 }
+      body: { query, size: DEFAULT_SEARCH_LIMIT }
     });
 
-    return body;
+    return format_search_response(body, {
+      index,
+      limit: DEFAULT_SEARCH_LIMIT,
+      offset: DEFAULT_SEARCH_OFFSET
+    });
   });
 
   fastify.get('/doc/:id', { schema: docSchema }, async function(request, reply) {
@@ -192,7 +203,7 @@ async function routes(fastify, options) {
       _source
     });
 
-    return body;
+    return format_document_response(body);
   });
 
 };

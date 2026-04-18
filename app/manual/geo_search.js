@@ -1,7 +1,4 @@
-const path = require('path');
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
-}
+const { config } = require('./bootstrap');
 const { client } = require('./client');
 
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->geo_search');
@@ -18,7 +15,7 @@ const debug = require('debug')('elasticsearch-restaurants-api-nodejs:->manual->g
     debug('response', err, result);
   });
 
-  var index = 'restaurants';
+  var index = config.default_index;
   try {
     var query = param_by_circle("200m", { "lat": -37.852, "lon": 144.993165 });
     // var query = param_by_rectange({ "lat": -37.80, "lon": 144.90 }, { "lat": -38, "lon": 145 });
