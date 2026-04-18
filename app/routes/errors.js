@@ -4,7 +4,7 @@ async function routes(fastify, options) {
 
   fastify.decorate('notFound', (request, reply) => {
     debug('requested url', request.url);
-    reply.code(404).send({ 'error': '404 Route not found.', msg: 'Please go home' });
+    return fastify.sendError(reply, 404, 'ROUTE_NOT_FOUND', '404 Route not found.');
   });
 
   fastify.get('/404', async (request, reply) => {

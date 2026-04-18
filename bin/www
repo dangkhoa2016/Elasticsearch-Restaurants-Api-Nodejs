@@ -4,20 +4,34 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
 }
 
-const { PORT: port = 8080, HOST: host = '0.0.0.0' } = process.env;
+const config = require('../app/config/runtime');
+
+const { port, host } = config;
 
 (async () => {
 
   const server = require('../app/index');
 
+  async function shutdown(signal) {
+    try {
+      server.log.info({ signal }, 'Received shutdown signal');
+      await server.close();
+      process.exit(0);
+    } catch (error) {
+      server.log.error({ err: error, signal }, 'Graceful shutdown failed');
+      process.exit(1);
+    }
+  }
+
   try {
     await server.listen({port, host});
+    server.log.info({ host, port }, 'Server listening');
 
-    process.on('SIGINT', () => { server.close(); });
-    process.on('SIGTERM', () => { server.close(); });
+    process.on('SIGINT', () => { void shutdown('SIGINT'); });
+    process.on('SIGTERM', () => { void shutdown('SIGTERM'); });
   } catch (err) {
-    console.log('error', err);
-    server.log.error(err);
+    console.error('error', err);
+    server.log.error({ err }, 'Server failed to start');
     process.exit(1);
   }
 

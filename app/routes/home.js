@@ -1,5 +1,9 @@
 const debug = require('debug')('elasticsearch-restaurants-api-nodejs:routes->home');
 const fs = require('fs');
+const path = require('path');
+
+const faviconIco = fs.readFileSync(path.join(__dirname, '../imgs/favicon.ico'));
+const faviconPng = fs.readFileSync(path.join(__dirname, '../imgs/favicon.png'));
 
 async function routes(fastify, options) {
 
@@ -8,16 +12,30 @@ async function routes(fastify, options) {
     return { message: 'Welcome to Elasticsearch Restaurants Api Nodejs.' };
   });
 
+  fastify.get('/health', async (request, reply) => {
+    return { status: 'ok' };
+  });
+
+  fastify.get('/ready', async (request, reply) => {
+    try {
+      await fastify.opensearch.ping();
+      return { status: 'ready' };
+    } catch (error) {
+      debug('Readiness check failed', error);
+      if (request.log && typeof request.log.error === 'function')
+        request.log.error({ err: error, requestId: request.id }, 'Readiness check failed');
+      return fastify.sendError(reply, 503, 'OPENSEARCH_NOT_READY', 'OpenSearch is not ready.');
+    }
+  });
+
   fastify.get('/favicon.ico', async (request, reply) => {
-    const buffer = fs.readFileSync('./app/imgs/favicon.ico');
     reply.type('image/x-icon');
-    reply.send(buffer);
+    reply.send(faviconIco);
   });
 
   fastify.get('/favicon.png', async (request, reply) => {
-    const buffer = fs.readFileSync('./app/imgs/favicon.png');
     reply.type('image/png');
-    reply.send(buffer);
+    reply.send(faviconPng);
   });
 
 };
